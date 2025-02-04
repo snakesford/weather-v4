@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import './App.css';
 
 function App() {
   const [currentWeather, setCurrentWeather] = useState(null);
-  const [suggestion, setSuggestion] = useState("Pants and a winter coat");
+  const [suggestion, setSuggestion] = useState("A thick jacket and gloves");
+  let isFetched = useRef(false);
 
   const fetchWeather = async () => {
     try {
@@ -25,16 +26,22 @@ function App() {
   }, [currentWeather]);
 
   useEffect(() => {
-    fetchWeather()
+    if(isFetched.current === false) {
+      fetchWeather()
+      console.log('fetched weather');
+      isFetched.current = true
+    } else {
+      console.log('already fetched weather');
+    }
   }, []);
 
   const handlePreferenceChange = (event) => {
     const value = event.target.value;
 
     if (value === "1") {
-      setSuggestion("Light clothing and sunglasses");
-    } else if (value === "2") {
       setSuggestion("A thick jacket and gloves");
+    } else if (value === "2") {
+      setSuggestion("Light clothing and sunglasses");
     }
   };
 
@@ -45,7 +52,22 @@ function App() {
       <header className="App-header">
         <button onClick={fetchWeather}>Refresh weather</button>
         <p>Weather: {currentWeather?.hourly?.temperature_2m?.[0] ?? "Loading..."}</p>
-        
+        <div>
+          <p>Tell us what clothes you have:</p>
+          <div>
+            <input type="checkbox" id="Winter-coat" name="Winter coat" value="Winter coat" />
+            <label htmlFor="Winter-coat">Winter coat</label><br/>
+            <input type="checkbox" id="Jacket" name="Jacket" value="Jacket" />
+            <label htmlFor="Jacket">Jacket</label><br/>
+          </div>
+              {/* select optiuons and give them data that identifies them as 1st layer/coat/shirt ect. */}
+          {/* Coat slot
+              pants slot
+              shirt slot
+              1st layer?
+              2ndlayer?
+              3rd layer? */}
+        </div>
 
         <label htmlFor="custom-select">Would you rather be more:</label>
         <div className="custom-select" style={{width: "200px"}}>
